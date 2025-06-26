@@ -1,0 +1,284 @@
+﻿@page "{id?}"
+@model InvoiceManagement.Pages.Invoices.AddEditModel
+
+<h2>@(Model.Invoice.InvoiceID > 0 ? "Edit Invoice" : "Add New Invoice")</h2>
+
+<form method="post">
+    <input type="hidden" asp-for="Invoice.InvoiceID" />
+
+    <div class="form-group">
+        <label asp-for="Invoice.InvoiceNumber"></label>
+        <input asp-for="Invoice.InvoiceNumber" class="form-control" />
+        <span asp-validation-for="Invoice.InvoiceNumber" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Invoice.Title"></label>
+        <input asp-for="Invoice.Title" class="form-control" />
+        <span asp-validation-for="Invoice.Title" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Invoice.InvoiceDate"></label>
+        <input asp-for="Invoice.InvoiceDate" class="form-control" type="date"/>
+        <span asp-validation-for="Invoice.InvoiceDate" class="text-danger"></span>
+    </div>
+
+    <hr />
+
+    <div id="lineItem_topane"> 
+        <div id="left" >Line Items</div>
+        <div type="button" id="btnAddRow" class="btn btn-primary">+ Add Row</div>
+    </div>
+    <div id="lineItemTable_root">
+        <table id="lineItemsTable" class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Item Code</th>
+                    <th>Description</th>
+                    <th>Unit Rate</th>
+                    <th>Quantity</th>
+                    <th>Line Total</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Loaded by AJAX -->
+            </tbody>
+        </table>
+    </div>
+    <div id="lineItemTable_footer">
+           
+           <div id="left">
+                <button type="button" id="prevPage" class="btn btn-secondary">Prev</button>
+                <span id="pageInfo">Page 1</span>
+            <button type="button" id="nextPage" class="btn btn-secondary">Next</button>
+           </div>
+            <div id="right">
+                <a asp-page="Index" class="btn btn btn-secondary">Cancel</a>
+                <button type="submit" id="btnSave" class="btn btn-primary">Save</button>
+            </div>
+    </div>
+    <input type="hidden" id="DeletedLineItemIDs" name="DeletedLineItemIDs" />
+
+</form>
+
+@section Scripts {
+    <script>
+        let currentPage = 1;
+        const pageSize = 5;
+        let totalItems = 0;
+        let deletedItemIds = [];
+
+        function updateLineTotal(input) {
+            const $row = $(input).closest('tr');
+            const rate = parseFloat($row.find('input[name*="UnitRate"]').val()) || 0;
+            const qty = parseFloat($row.find('input[name*="Quantity"]').val()) || 0;
+            $row.find('.line-total').text((rate * qty).toFixed(2));
+        }
+
+        function loadLineItemsPage() {
+            const invoiceId = @Model.Invoice.InvoiceID;
+
+            // If new invoice, just render one empty row locally
+            if (invoiceId === 0) {
+                const $tbody = $('#lineItemsTable tbody');
+                $tbody.empty();
+                $tbody.append(renderRow({
+                    lineItemID: 0,
+                    itemCode: '',
+                    description: '',
+                    unitRate: 0,
+                    quantity: 0
+                }, 0));
+
+                $('#pageInfo').text("Page 1 of 1");
+                $('#prevPage, #nextPage').prop('disabled', true);
+                return;
+            }
+             $.get(`/Invoices/AddEdit?handler=LineItemsPage`, {
+                invoiceId,
+                pageNumber: currentPage,
+                pageSize: pageSize
+            }, function (res) {
+                const items = res.data;
+                totalItems = res.total;
+
+                const $tbody = $('#lineItemsTable tbody');
+                $tbody.empty();
+
+                items.forEach((item, index) => {
+                    const actualIndex = (currentPage - 1) * pageSize + index;
+                    $tbody.append(renderRow(item, actualIndex));
+                });
+
+                const totalPages = Math.ceil(totalItems / pageSize);
+                $('#pageInfo').text(`Page ${currentPage} of ${totalPages}`);
+                $('#prevPage').prop('disabled', currentPage <= 1);
+                $('#nextPage').prop('disabled', currentPage >= totalPages);
+            });
+        }
+
+        function renderRow(item, index) {
+            return `
+                <tr data-lineitemid="${item.lineItemID || ''}">
+                     <input type="hidden" name="Invoice.LineItems[${index}].LineItemID" value="${item.lineItemID || 0}" />
+                    <td><input name="Invoice.LineItems[${index}].ItemCode" value="${item.itemCode || ''}" class="form-control" /></td>
+                    <td><input name="Invoice.LineItems[${index}].Description" value="${item.description || ''}" class="form-control" /></td>
+                    <td><input name="Invoice.LineItems[${index}].UnitRate" value="${item.unitRate || 0}" class="form-control" oninput="updateLineTotal(this)" /></td>
+                    <td><input name="Invoice.LineItems[${index}].Quantity" value="${item.quantity || 0}" class="form-control" oninput="updateLineTotal(this)" /></td>
+                    <td><span class="line-total">${((item.unitRate || 0) * (item.quantity || 0)).toFixed(2)}</span></td>
+                    <td><button type="button" class="btn btn-danger btn-delete">Delete</button></td>
+                </tr>`;
+        }
+
+
+         $(document).on('blur', '#lineItemsTable input', function () {
+            const $row = $(this).closest('tr');
+            validateLineItemRow($row);
+        });
+
+
+         $('#btnSave').on('click', function (e) {
+            e.preventDefault(); 
+
+            let isAllValid = true;
+            let validLineItemCount = 0;
+           
+            // Validate Invoice fields
+            const invoiceNumber = $('input[name="Invoice.InvoiceNumber"]').val().trim();
+            const title = $('input[name="Invoice.Title"]').val().trim();
+            const invoiceDate = $('input[name="Invoice.InvoiceDate"]').val().trim();
+            
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); 
+
+            const inputDate = new Date(invoiceDate);
+            inputDate.setHours(0, 0, 0, 0); 
+           
+            if (invoiceNumber === "") {
+                isAllValid = false;
+                markInvalid($('input[name="Invoice.InvoiceNumber"]'), "Invoice Number required");
+            }
+
+            if (title === "") {
+                isAllValid = false;
+                markInvalid($('input[name="Invoice.Title"]'), "Title required");
+            }
+
+            if (invoiceDate === "" || isNaN(inputDate) || inputDate < today) {
+                isAllValid = false;
+                markInvalid($('input[name="Invoice.InvoiceDate"]'), "Date must be today or later");
+            }
+
+            $('#lineItemsTable tbody tr').each(function () {
+                const $row = $(this);
+                if (validateLineItemRow($row)) {
+                    validLineItemCount++;
+                } else {
+                    isAllValid = false;
+                }
+            });
+
+            if (validLineItemCount === 0) {
+                alert("At least one valid line item is required.");
+                return;
+            }
+
+            if (isAllValid) {
+                $('form').off('submit'); 
+                $('form').submit();  
+            }
+        });
+
+
+
+        function validateLineItemRow($row) {
+            let isValid = true;
+
+            // Clear old errors
+            $row.find('.validation-message').remove();
+            $row.find('input').removeClass('input-error');
+
+            $row.find('input').each(function () {
+                const $input = $(this);
+                const name = $input.attr('name');
+                const value = $input.val().trim();
+                let errorMessage = "";
+
+                switch (true) {
+                    case name.includes("ItemCode") && value === "":
+                        errorMessage = "Item Code is required";
+                        break;
+
+                    case name.includes("Description") && value === "":
+                        errorMessage = "Description is required";
+                        break;
+
+                    case name.includes("UnitRate") && (value === "" || isNaN(value) || parseFloat(value) <= 0):
+                        errorMessage = "Enter valid Unit Rate";
+                        break;
+
+                    case name.includes("Quantity") && (value === "" || isNaN(value) || parseInt(value) <= 0):
+                        errorMessage = "Enter valid Quantity";
+                        break;
+                }
+
+                if (errorMessage) {
+                    isValid = false;
+                    markInvalid($input, errorMessage);
+                }
+            });
+
+            return isValid;
+        }
+
+        function markInvalid($input, message) {
+            $input.addClass('input-error');
+            $input.after(`<span class="validation-message text-danger">${message}</span>`);
+            $input.attr('placeholder', message);
+        }
+
+        function updateDeletedIdsField() {
+             $('#DeletedLineItemIDs').val(JSON.stringify(deletedItemIds));
+        }
+        $('#prevPage').click(function () {
+            if (currentPage > 1) {
+                currentPage--;
+                loadLineItemsPage();
+            }
+        });
+
+        $('#nextPage').click(function () {
+            const totalPages = Math.ceil(totalItems / pageSize);
+            if (currentPage < totalPages) {
+                currentPage++;
+                loadLineItemsPage();
+            }
+        });
+
+        $(document).on('click', '.btn-delete', function () {
+           
+            const $row = $(this).closest('tr');
+            const lineItemId = $row.data('lineitemid');
+
+            if (lineItemId) {
+                deletedItemIds.push(lineItemId);
+            }
+
+            $row.remove();
+            updateDeletedIdsField();
+        });
+
+        $('#btnAddRow').click(function () {
+            const rowCount = $('#lineItemsTable tbody tr').length;
+            const index = (currentPage - 1) * pageSize + rowCount;
+            const newRow = renderRow({}, index);
+            $('#lineItemsTable tbody').append(newRow);
+        });
+
+        $(document).ready(function () {
+            loadLineItemsPage();
+        });
+    </script>
+}

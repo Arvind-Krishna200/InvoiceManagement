@@ -1,0 +1,70 @@
+﻿@page
+@model InvoiceManagement.Pages.Invoices.IndexModel
+@{
+    ViewData["Title"] = "Invoice List";
+}
+
+<div id="invoiceList_toppane">
+    <div id="left">Invoice List</div>
+    <a id="right" class="btn btn-primary" href="/Invoices/AddEdit">+ Add New Invoice</a>
+</div>
+
+<table id="invoiceTable" class="invoice-table" style="width:100%">
+    <thead>
+        <tr>
+            <th>Invoice Number</th>
+            <th>Title</th>
+            <th>Date</th>
+            <th>Total Amount</th>
+            <th class="no-sort">Action</th>
+        </tr>
+    </thead>
+</table>
+
+@section Scripts {
+<script>
+        $(document).ready(function () {
+        $('#invoiceTable').DataTable({
+            "processing": true,
+            "serverSide": true,
+            pageLength: 5,
+            lengthChange: false,
+            "ajax": {
+                "url": "/Invoices?handler=GetAllInvoices",
+                "data": function (d) {
+                    d.searchTerm = d.search.value;
+                }
+            },
+            "columns": [
+                { "data": "invoiceNumber" },
+                { "data": "title" },
+                {
+                    "data": "invoiceDate",
+                    "render": function (data) {
+                        return new Date(data).toLocaleDateString();
+                    }
+                },
+                {
+                    "data": "totalAmount",
+                    "render": function (data) {
+                        return '₹' + data.toFixed(2);
+                    }
+                },
+                {
+                    "data": "invoiceID",
+                    "render": function (data) {
+                        return `<a href="/Invoices/AddEdit?id=${data}" class="btn btn-sm btn-primary">View / Edit</a>`;
+                    },
+                    name: "actions",
+                }
+            ],
+            columnDefs: [
+                {
+                    targets: 'no-sort',
+                    orderable: false
+                }
+            ]
+        });
+    });
+</script>
+}
