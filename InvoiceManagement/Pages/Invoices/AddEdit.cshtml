@@ -80,7 +80,7 @@
         function loadLineItemsPage() {
             const invoiceId = @Model.Invoice.InvoiceID;
 
-            // If new invoice, just render one empty row locally
+            // If new invoice, just render one empty row locally 
             if (invoiceId === 0) {
                 const $tbody = $('#lineItemsTable tbody');
                 $tbody.empty();
