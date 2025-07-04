@@ -1,0 +1,301 @@
+﻿
+
+/* Floating Chat Icon */
+.self-help-icon {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #0d6efd;
+    color: black;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    z-index: 9999;
+}
+
+/* Floating FAQ Panel */
+.self-help-panel {
+    position: fixed;
+    bottom: 4.5vw;
+    right: 1vw;
+    width: 22vw;
+    background-color: #f6f6f9;
+    color: #444;
+    border-radius: 20px;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 9998;
+    font-family: sans-serif;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: none;
+}
+
+.self-help-panel.open {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+/* Header */
+.self-help-panel > .self-help-header {
+    padding: 10px 24px;
+    background-color: #0d6efd;
+    font-size: 0.95rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 1vw;
+    color: white;
+    height: 60px;
+    flex: 0 0 auto;
+}
+
+.self-help-panel > .self-help-header > .self-help-title {
+    display:flex;
+    align-items:center;
+}
+
+.back-to-faq {
+    cursor: pointer;
+    margin-right: 8px;
+}
+
+.close-help{
+    display:flex;
+    cursor:pointer;
+}
+
+/* Body */
+.self-help-panel > .self-help-body {
+    padding: 0 1vw;
+    overflow-y: auto;
+    flex: 1;
+    padding-bottom: 0;
+    height:28vw;
+}
+
+/* Search */
+.self-help-panel .self-help-search {
+    margin-bottom:1vw;
+    position: sticky;
+    top: 0px;
+}
+
+.self-help-panel .self-help-search input {
+    width: 100%;
+    padding: 0.5vw 0.5vw 0.5vw 2vw;
+    font-size: 0.9rem;
+    border-radius: 4px;
+    border: 1px solid #dfdfdf;
+    outline: none;
+}
+
+.self-help-panel .self-help-search .search-icon {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    color: #acacac;
+    font-size: 1.4rem;
+    pointer-events: none;
+}
+
+/* FAQ Items */
+.self-help-panel > .self-help-body > .faq-item {
+    margin-bottom: 0.6vw;
+    padding: 0.75vw;
+    border: 1px solid #ececf3;
+    border-radius: 0.25vw;
+    background-color: white;
+    transition: box-shadow 0.2s ease;
+}
+
+.faq-item:hover {
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.16);
+}
+
+.faq-question {
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    user-select: none;
+    font-size: 0.95rem;
+}
+
+.faq-answer {
+    display: none;
+    margin-top: 5px;
+    color: #222;
+    font-size: 0.85rem;
+}
+
+
+/* Footer */
+.self-help-panel > .self-help-footer {
+    padding: 20px;
+    border-top: 1px solid #e4e4e4;
+    justify-content: center;
+    display: flex;
+    height:4vw;
+}
+
+.self-help-panel > .self-help-footer > #start-chat-btn {
+    background-color: #0d6efd;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.self-help-footer #start-chat-btn:hover {
+    background-color: #0056b3;
+}
+
+
+/* Chat View */
+.self-help-panel > .self-help-chat {
+    display: none;
+    flex-direction: column;
+    padding: 0 1vw;
+    height: 32vw;
+}
+
+.self-help-chat > .chat-body {
+    padding: 10px 0;
+    overflow-y: auto;
+    font-size: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height:32vw;
+}
+
+.self-help-chat > .chat-input-area {
+    display: flex;
+    padding: 1vw 0;
+    height: 90px;
+    position:relative;
+    flex:0 0 auto;
+}
+
+.chat-input-area input {
+    flex: 1;
+    padding: 6px 10px;
+    border: 1px solid #acacac;
+    border-radius: 10px;
+    margin-right: 6px;
+    outline: none;
+    font-size: 14px;
+}
+
+.chat-input-area button {
+    padding: 6px 12px;
+    color: #f6f6f9;
+    border: 1px solid #dfdfdfee;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    right: 15px;
+    top: 26px;
+    background-color: #0d6efde0;
+}
+
+/* Chat Bubbles */
+.chat-bubble {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    max-width: 100%;
+}
+
+.chat-msg.bot .chat-bubble {
+    flex-direction: row;
+}
+
+.chat-msg.user .chat-bubble {
+    flex-direction: row-reverse;
+}
+
+.profile-pic {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: #eee;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.profile-pic img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.bubble-content {
+    max-width: 70%;
+    background: inherit;
+}
+
+.chat-text {
+    padding: 8px 12px;
+    border-radius: 16px;
+    line-height: 1.4;
+    word-wrap: break-word;
+    display: inline-block;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+
+.chat-msg.bot .chat-text {
+    background-color: #f0f0f0;
+    color: black;
+    border-bottom-left-radius: 4px;
+}
+
+.chat-msg.user .chat-text {
+    background-color: #0d6efd;
+    color: white;
+    border-bottom-right-radius: 4px;
+}
+
+.chat-time {
+    font-size: 0.7rem;
+    color: #888;
+    margin-top: 3px;
+    text-align: right;
+}
+
+/* scroll bar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+
+::-webkit-scrollbar-thumb {
+    background: gray;
+    border-radius: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: rgba(0, 0, 0, 0);
+}

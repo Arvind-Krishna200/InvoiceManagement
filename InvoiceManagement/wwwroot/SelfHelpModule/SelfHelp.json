@@ -1,0 +1,18 @@
+[
+  {
+    "question": "How do I create an Invoice?",
+    "answer": "Click on the Add New Invoice button on the top right corner."
+  },
+  {
+    "question": "How do I Edit the invoice?",
+    "answer": "Click on the View / Edit button under the action column to 'EDIT'."
+  },
+  {
+    "question": "Where can I contact support?",
+    "answer": "Click on 'Chat with us' or email us at support@hiproserv.com"
+  },
+  {
+    "question": "How to delete an invoice line item?",
+    "answer": "Click on the View / Edit button under the action column and you can see 'DELETE' option for line item."
+  }
+]
