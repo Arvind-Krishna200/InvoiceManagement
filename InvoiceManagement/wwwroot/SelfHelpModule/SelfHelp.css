@@ -7,23 +7,23 @@
     right: 20px;
     background-color: #0d6efd;
     color: black;
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
     font-size: 26px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     z-index: 9999;
 }
 
 /* Floating FAQ Panel */
 .self-help-panel {
     position: fixed;
-    bottom: 4.5vw;
-    right: 1vw;
+    bottom: 5vw;
+    right: 2vw;
     width: 22vw;
     background-color: #f6f6f9;
     color: #444;
@@ -298,4 +298,141 @@
 
 ::-webkit-scrollbar-track {
     background-color: rgba(0, 0, 0, 0);
+}
+
+/* Loading Dots Animation */
+.loading-dots {
+    display: inline-flex;
+    gap: 3px;
+    font-size: 20px;
+    color: #999;
+    line-height: 1;
+}
+.chat-text.loading-dots {
+    white-space: unset;
+    font-size: 16px;
+    font-weight: bold;
+}
+.loading-dots span {
+    animation: blink 1.4s infinite both;
+}
+
+.loading-dots span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.loading-dots span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes blink {
+    0% {
+        opacity: 0.2;
+        transform: translateY(0);
+    }
+
+    20% {
+        opacity: 1;
+        transform: translateY(-2px);
+    }
+
+    100% {
+        opacity: 0.2;
+        transform: translateY(0);
+    }
+}
+
+/* Chat Bubble text supports emoji wrapping and loading state */
+.chat-text {
+    padding: 8px 12px;
+    border-radius: 16px;
+    line-height: 1.4;
+    word-break: break-word;
+    word-wrap: break-word;
+    display: inline-block;
+    font-size: 0.9rem;
+    white-space: pre-wrap;
+}
+
+
+.suggestions-box .suggestions-title {
+    font-weight: bold;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+.suggestion-item {
+    padding: 10px;
+    border: 1px solid #ececec;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    background-color: #f7f7f7;
+}
+.suggestion-item:hover {
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 3px;
+}
+.chat-suggestions {
+    padding: 20px 10px 10px 10px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    background-color: #f0f0f0;
+    color: black;
+    border-radius: 16px;
+    border-bottom-left-radius: 4px;
+}
+
+.assist-text {
+    padding: 0 6px 4px 4px;
+}
+
+.loader-box {
+    color: white;
+    background-color: #ffffff;
+    padding: 6px;
+    border-radius: 16px;
+    border-bottom-left-radius: 4px;
+}
+
+.loader {
+    width: 25px;
+    aspect-ratio: 2;
+    --_g: no-repeat radial-gradient(circle closest-side, #e8e8e8 90%, #0000);
+    background: var(--_g) 0% 50%, var(--_g) 50% 50%, var(--_g) 100% 50%;
+    background-size: calc(100%/3) 50%;
+    animation: l3 1s infinite linear;
+}
+
+@keyframes l3 {
+    20% {
+        background-position: 0% 0%, 50% 50%,100% 50%
+    }
+
+    40% {
+        background-position: 0% 100%, 50% 0%,100% 50%
+    }
+
+    60% {
+        background-position: 0% 50%, 50% 100%,100% 0%
+    }
+
+    80% {
+        background-position: 0% 50%, 50% 50%,100% 100%
+    }
+}
+
+.self-help-icon.glow {
+    animation: pulse-glow 2s infinite;
+}
+
+@keyframes pulse-glow {
+    0% {
+        box-shadow: 0 0 0px rgba(13, 110, 253, 0.7);
+    }
+
+    50% {
+        box-shadow: 0 0 12px 4px rgba(13, 110, 253, 0.6);
+    }
+
+    100% {
+        box-shadow: 0 0 0px rgba(13, 110, 253, 0.7);
+    }
 }

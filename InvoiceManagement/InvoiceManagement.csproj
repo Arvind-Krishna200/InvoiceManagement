@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="SelfHelpModule\Controllers\ChatController.cs" />
+    <Content Include="SelfHelpModule\Models\ChatRequest.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="wwwroot\SelfHelpModule\SelfHelp.css" />
     <None Include="wwwroot\SelfHelpModule\SelfHelp.js" />
   </ItemGroup>

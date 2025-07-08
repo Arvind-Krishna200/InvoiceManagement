@@ -5,6 +5,8 @@ builder.Services.AddRazorPages(options =>
 {
     options.Conventions.AddPageRoute("/Invoices/Index", ""); // Set Login as default route
 });
+builder.Services.AddControllers()
+       .AddApplicationPart(typeof(InvoiceManagement.SelfHelpModule.Controllers.ChatController).Assembly);
 
 var app = builder.Build();
 
@@ -24,5 +26,6 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapRazorPages();
+app.MapControllers();
 
 app.Run();
